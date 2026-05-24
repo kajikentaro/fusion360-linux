@@ -8,7 +8,7 @@ export BROWSER="/home/aaa/fusion-browser.sh"
 export WINEDLLOVERRIDES="bcp47langs="
 # Previous safe-login fallback:
 # export WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--disable-gpu --no-sandbox"
-export WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--disable-gpu-compositing --no-sandbox"
+export WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--no-sandbox"
 export STEAM_COMPAT_DATA_PATH="$HOME/.fusion360-proton2"
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="$HOME/.local/share/Steam"
 
