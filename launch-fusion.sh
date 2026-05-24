@@ -4,7 +4,8 @@ set -euo pipefail
 export PROTON_USE_WINED3D=0
 export DXVK_ASYNC=1
 export NO_AT_BRIDGE=1
-export BROWSER="/home/aaa/fusion-browser.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export BROWSER="$SCRIPT_DIR/fusion-browser.sh"
 export WINEDLLOVERRIDES="bcp47langs="
 # Previous safe-login fallback:
 # export WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--disable-gpu --no-sandbox"
