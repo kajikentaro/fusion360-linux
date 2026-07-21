@@ -15,4 +15,20 @@ ps:
 	@pgrep -af '$(FUSION_PATTERN)' || true
 
 log:
-	echo tail -f "$$(ls -t "$(NEUTRON_LOG_DIR)"/*.log "$(FUSION_USER_LOG_DIR)"/*.log | head -n 1)"
+	@latest="$$(ls -t "$(NEUTRON_LOG_DIR)"/*.log "$(FUSION_USER_LOG_DIR)"/*.log 2>/dev/null | head -n 1)"; \
+	if [ -n "$$latest" ]; then \
+		echo "Following: $$latest"; \
+		tail -f "$$latest"; \
+	else \
+		echo "No log files found."; \
+		exit 1; \
+	fi
+
+install:
+	cd installer && bash -x ./install-fusion.sh
+
+installer-logs:
+	cd installer && tail -f logs/*
+
+installer-kill:
+	pkill -f 'Fusion Client Downloader.exe|streamer.exe'

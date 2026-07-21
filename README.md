@@ -12,12 +12,11 @@ The shortest working path is to keep the same directory layout used by the scrip
 
 ```bash
 cd ~
-# clone or copy this directory as ~/fusion
-cd ~/fusion
-chmod +x launch-fusion.sh fusion-browser.sh
+git clone https://github.com/kajikentaro/fusion360-linux
+cd ~/fusion360-linux
 ```
 
-The Makefile expects this repository to be run from `~/fusion`.
+The Makefile expects this repository to be run from `~/fusion360-linux`.
 
 ### 2. Install GE-Proton
 
@@ -37,34 +36,58 @@ After extraction, this file should exist:
 
 ### 3. Download the Fusion installer
 
-Put Autodesk's `FusionClientDownloader.exe` here:
+Download FusionClientDownloader.exe from official site and place it under ~/Download directory.
 
 ```text
-~/Downloads/fusion360-linux-install/FusionClientDownloader.exe
+ls ~/Download/FusionClientDownloader.exe
 ```
 
 ### 4. Install Fusion 360 into the Proton prefix
 
 ```bash
+mkdir -p ~/.fusion360-proton2
 export STEAM_COMPAT_DATA_PATH="$HOME/.fusion360-proton2"
 export STEAM_COMPAT_CLIENT_INSTALL_PATH="$HOME/.local/share/Steam"
 
-"$HOME/.local/share/Steam/compatibilitytools.d/GE-Proton10-32/proton" run \
-  "$HOME/Downloads/fusion360-linux-install/FusionClientDownloader.exe"
+"$HOME/.local/share/Steam/compatibilitytools.d/GE-Proton10-32/proton" run ~/Download/FusionClientDownloader.exe
 ```
 
 When the installer finishes, `Fusion360.exe` should appear under:
 
 ```text
-~/.fusion360-proton2/pfx/drive_c/users/steamuser/AppData/Local/Autodesk/webdeploy/production/
+find ~/.fusion360-proton2/pfx/drive_c/users/steamuser/AppData/Local/Autodesk/webdeploy/production/ -type f -name Fusion360.exe 
 ```
 
-`launch-fusion.sh` finds the current `Fusion360.exe` automatically.
+### 4-B. Run post-install.sh
 
-### 5. Run Fusion 360
+In order to make a connection with Chrome, we need to run below.
+
+```
+cd installer
+bash post-install.sh
+```
+
+### 4-C. Login with Fusion 360
+
+Run background service to catch login request from Fusion 360
+
+```
+./background.sh
+```
+
+Run Fusion 360
+```
+make run
+```
+
+Click "sign in" and Chrome will open.
+After logging-in, Chrome open Fusion 360 and it's authorized.
+
+### 5. Run Fusion 360 from 2nd time
+
+Run Fusion 360
 
 ```bash
-cd ~/fusion
 make run
 ```
 
@@ -78,45 +101,4 @@ Stop it:
 
 ```bash
 make kill
-```
-
-## Sign In
-
-If clicking `Sign in` does not open Chrome, check the browser log:
-
-```bash
-tail -n 20 /tmp/fusion-browser.log
-```
-
-Copy the latest Autodesk sign-in URL into Chrome manually. Do not share this URL; it can contain authentication state.
-
-`fusion-browser.sh` uses:
-
-```text
-/usr/bin/google-chrome
-```
-
-If your Chrome binary is elsewhere, edit `fusion-browser.sh`.
-
-## Notes
-
-`launch-fusion.sh` copies Fusion's production config to `Fusion 360.server.config` on every launch. This avoids the staging config error that tries to reach `art-bobcat.autodesk.com`.
-
-Current WebView2 option:
-
-```bash
-export WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--no-sandbox"
-```
-
-If the sign-in window becomes black, try the fallback in `launch-fusion.sh`:
-
-```bash
-export WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--disable-gpu --no-sandbox"
-```
-
-Then restart Fusion:
-
-```bash
-make kill
-make run
 ```
